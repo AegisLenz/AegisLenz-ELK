@@ -1,7 +1,7 @@
 filebeat.inputs:
   - type: aws-s3
     enabled: true
-    number_of_workers: 1
+    number_of_workers: 3  # 워커 수 증가
     bucket_arn: "arn:aws:s3:::aegislenz-s3" 
     access_key_id: "*"
     secret_access_key: "*" 
@@ -12,6 +12,8 @@ filebeat.inputs:
     prefix: "AWSLogs/713881791527/CloudTrail/us-east-1/"
     compression: "gzip"
     start_position: beginning
+    scan_frequency: 1m  # 주기적으로 새 파일 검색
+    close_inactive: 5m  # 비활성화된 파일 닫기
 
 output.logstash:
   hosts: ['logstash:5045']
