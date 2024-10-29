@@ -8,9 +8,9 @@ services:
       - "9200:9200"
       - "9300:9300"
     environment:
-      - ELASTIC_PASSWORD=*
       - discovery.type=single-node
       - xpack.security.enabled=false
+      - network.host=0.0.0.0
     networks:
       - elastic
     volumes:
@@ -26,6 +26,11 @@ services:
       - ./Logstash/config/pipeline.yml:/usr/share/logstash/config/pipeline.yml
       - ./Logstash/pipeline/pipeline.conf:/usr/share/logstash/pipeline/pipeline.conf
       - logstash-data:/usr/share/logstash/data
+    environment:
+      - LS_JAVA_OPTS=${LS_JAVA_OPTS}
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+      - AWS_REGION=${AWS_REGION}
     networks:
       - elastic
 
@@ -35,7 +40,7 @@ services:
     ports:
       - "5601:5601"
     environment:
-      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+      - ELASTICSEARCH_HOSTS=${ELASTIC_HOST}
       - xpack.security.enabled=false
     networks:
       - elastic
@@ -50,6 +55,10 @@ services:
       - filebeat-data:/usr/share/filebeat/data
     networks:
       - elastic
+    environment:
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+      - AWS_REGION=${AWS_REGION}
 
 networks:
   elastic:
@@ -63,4 +72,4 @@ volumes:
   kibana-data:
     driver: local  
   filebeat-data:
-    driver: local  
+    driver: local
