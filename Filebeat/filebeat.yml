@@ -12,8 +12,8 @@ filebeat.inputs:
     prefix: "AWSLogs/713881791527/CloudTrail/us-east-1/"
     compression: "gzip"
     start_position: beginning
-    scan_frequency: 1m
-    close_inactive: 5m
+    scan_frequency: 5m
+    close_inactive: 10m
 
 output.logstash:
   hosts: ['logstash:5045']

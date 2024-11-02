@@ -15,6 +15,11 @@ services:
       - elastic
     volumes:
       - es-data:/usr/share/elasticsearch/data
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:9200/_cluster/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
 
   logstash:
     image: docker.elastic.co/logstash/logstash:8.15.2
@@ -27,15 +32,17 @@ services:
       - ./Logstash/pipeline/pipeline.conf:/usr/share/logstash/pipeline/pipeline.conf
       - logstash-data:/usr/share/logstash/data
     environment:
-      - LS_JAVA_OPTS=-Xms12g -Xmx12g
+      - LS_JAVA_OPTS=-Xms8g -Xmx8g
       - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
       - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
       - AWS_REGION=${AWS_REGION}
       - ELASTIC_HOST=http://elasticsearch:9200
     depends_on:
-      - elasticsearch
+      elasticsearch:
+        condition: service_healthy
     networks:
       - elastic
+    restart: always
 
   kibana:
     image: docker.elastic.co/kibana/kibana:8.15.2
@@ -46,11 +53,13 @@ services:
       - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
       - xpack.security.enabled=false
     depends_on:
-      - elasticsearch
+      elasticsearch:
+        condition: service_healthy
     networks:
       - elastic
     volumes:
       - kibana-data:/usr/share/kibana/data
+    restart: always
 
   filebeat:
     image: docker.elastic.co/beats/filebeat:8.10.2
@@ -65,8 +74,11 @@ services:
       - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
       - AWS_REGION=${AWS_REGION}
     depends_on:
-      - elasticsearch
-      - logstash
+      elasticsearch:
+        condition: service_healthy
+      logstash:
+        condition: service_started
+    restart: always
 
 networks:
   elastic:
