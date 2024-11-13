@@ -29,7 +29,7 @@ services:
     image: docker.elastic.co/logstash/logstash:8.15.2
     container_name: logstash
     ports:
-      - "5045:5044"
+      - "5045:5045"
     volumes:
       - ./Logstash/config/logstash.yml:/usr/share/logstash/config/logstash.yml
       - ./Logstash/config/pipeline.yml:/usr/share/logstash/config/pipeline.yml
@@ -68,6 +68,7 @@ services:
     volumes:
       - kibana-data:/usr/share/kibana/data
     restart: always
+
   filebeat:
     image: docker.elastic.co/beats/filebeat:8.10.2
     container_name: filebeat
@@ -86,9 +87,11 @@ services:
       logstash:
         condition: service_started
     restart: always
+
 networks:
   elastic:
     driver: bridge
+
 volumes:
   es-data:
     driver: local 
