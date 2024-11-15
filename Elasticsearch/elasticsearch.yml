@@ -2,4 +2,4 @@ cluster.name: "docker-cluster"
 network.host: 0.0.0.0
 xpack.security.enabled: false
 http.port: 9200
-action.auto_creation.index: true
+action.auto_create_index: true
