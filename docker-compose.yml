@@ -15,6 +15,7 @@ services:
       - elastic
     volumes:
       - es-data:/usr/share/elasticsearch/data
+      - ./Elasticsearch/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml:ro # 설정 파일 마운트
     healthcheck:
       test: ["CMD-SHELL", "curl -f http://localhost:9200/_cluster/health || exit 1"]
       interval: 30s

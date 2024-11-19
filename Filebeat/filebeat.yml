@@ -1,7 +1,7 @@
 filebeat.inputs:
   - type: aws-s3
     enabled: true
-    number_of_workers: 3
+    number_of_workers: 4
     bucket_arn: "arn:aws:s3:::aegislenz-s3"
     access_key_id: "${AWS_ACCESS_KEY_ID}"
     secret_access_key: "${AWS_SECRET_ACCESS_KEY}"
@@ -11,11 +11,19 @@ filebeat.inputs:
     expand_event_list_from_field: "Records"
     prefix: "AWSLogs/713881791527/CloudTrail/us-east-1/"
     compression: "gzip"
-    start_position: beginning
-    scan_frequency: 5m
+    start_position: end
+    scan_frequency: 1m
     close_inactive: 10m
+
+    processors:
+      - add_fields:
+          target: ""
+          fields:
+            ingest_time: "{{_ingest.timestamp}}"
+      - drop_fields:
+          fields: ["host", "agent"]
 
 output.logstash:
   hosts: ['logstash:5045']
 
-logging.level: debug
+logging.level: info
