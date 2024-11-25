@@ -11,7 +11,8 @@ filebeat.inputs:
     expand_event_list_from_field: "Records"
     prefix: "AWSLogs/713881791527/CloudTrail/us-east-1/"
     compression: "gzip"
-    start_position: end
+
+    start_position: beginning
     scan_frequency: 1m
     close_inactive: 10m
 
@@ -19,11 +20,12 @@ filebeat.inputs:
       - add_fields:
           target: ""
           fields:
-            ingest_time: "{{_ingest.timestamp}}"
+            ingest_time: "{{_ingest.timestamp}}"  
       - drop_fields:
-          fields: ["host", "agent"]
+          fields: ["host", "agent", "@version", "input"]
 
 output.logstash:
-  hosts: ['logstash:5045']
+  hosts: ['logstash:5045']                        
 
-logging.level: info
+logging.level: debug                        
+logging.selectors: ["*"]
