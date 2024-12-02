@@ -36,6 +36,7 @@ services:
       - ./Logstash/config/pipeline.yml:/usr/share/logstash/config/pipeline.yml
       - ./Logstash/pipeline/pipeline.conf:/usr/share/logstash/pipeline/pipeline.conf
       - logstash-data:/usr/share/logstash/data
+      - ./sincedb/sincedb:/usr/share/logstash/sincedb_cloudtrail
     environment:
       - LS_JAVA_OPTS=-Xms4g -Xmx4g
       - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
@@ -70,25 +71,6 @@ services:
       - kibana-data:/usr/share/kibana/data
     restart: always
 
-  filebeat:
-    image: docker.elastic.co/beats/filebeat:8.10.2
-    container_name: filebeat
-    volumes:
-      - ./Filebeat/filebeat.yml:/usr/share/filebeat/filebeat.yml:ro
-      - filebeat-data:/usr/share/filebeat/data
-    networks:
-      - elastic
-    environment:
-      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
-      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
-      - AWS_REGION=${AWS_REGION}
-    depends_on:
-      elasticsearch:
-        condition: service_healthy
-      logstash:
-        condition: service_started
-    restart: always
-
 networks:
   elastic:
     driver: bridge
@@ -99,6 +81,6 @@ volumes:
   logstash-data:
     driver: local 
   kibana-data:
-    driver: local  
-  filebeat-data:
+    driver: local
+  sincedb-data:
     driver: local
