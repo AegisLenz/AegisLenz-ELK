@@ -36,7 +36,7 @@ services:
       - ./Logstash/config/pipeline.yml:/usr/share/logstash/config/pipeline.yml
       - ./Logstash/pipeline/pipeline.conf:/usr/share/logstash/pipeline/pipeline.conf
       - logstash-data:/usr/share/logstash/data
-      - ./sincedb/sincedb:/usr/share/logstash/sincedb_cloudtrail
+      - ./Logstash/sincedb:/usr/share/logstash/sincedb
     environment:
       - LS_JAVA_OPTS=-Xms4g -Xmx4g
       - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
